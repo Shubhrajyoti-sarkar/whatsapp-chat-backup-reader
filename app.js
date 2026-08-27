@@ -53,6 +53,12 @@ function attachmentFrom(text) {
   return name ? { name: name.trim(), caption: cleanText.replace(marker?.[0] || androidMarker?.[0] || '', '').trim() } : null;
 }
 
+function editedMessage(text) {
+  const marker = /\s*\\?<This message was edited>\s*/i;
+  const cleanText = text.replace(/[\uFEFF\u200B-\u200F\u202A-\u202E\u2060]/g, '');
+  return { text: cleanText.replace(marker, '').trim(), edited: marker.test(cleanText) };
+}
+
 function mediaType(name) {
   const extension = name.split('.').pop().toLowerCase();
   if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic'].includes(extension)) return 'image';
@@ -83,10 +89,11 @@ function display(messages, media = new Map()) {
     const divider = message.date !== previousDate ? `<div class="date-divider"><span>${escapeHtml(message.date)}</span></div>` : '';
     previousDate = message.date;
     const sent = message.sender === ownName;
-    const attachment = attachmentFrom(message.text);
-    const body = attachment ? attachment.caption : message.text;
+    const edited = editedMessage(message.text);
+    const attachment = attachmentFrom(edited.text);
+    const body = attachment ? attachment.caption : edited.text;
     const file = attachment && media.get(normaliseFileName(attachment.name));
-    return `${divider}<article class="message-row ${sent ? 'sent' : 'received'}"><div class="message"><span class="sender">${escapeHtml(message.sender)}</span>${attachment ? mediaMarkup(attachment, file) : ''}${body ? `<span class="message-text">${escapeHtml(body)}</span>` : ''}<time class="message-time">${escapeHtml(message.time)}</time></div></article>`;
+    return `${divider}<article class="message-row ${sent ? 'sent' : 'received'}"><div class="message"><span class="sender">${escapeHtml(message.sender)}</span>${attachment ? mediaMarkup(attachment, file) : ''}${body ? `<span class="message-text">${escapeHtml(body)}</span>` : ''}<time class="message-time">${edited.edited ? '<span class="edited-label">Edited</span>' : ''}${escapeHtml(message.time)}</time></div></article>`;
   }).join('');
   chatArea.scrollTop = chatArea.scrollHeight;
 }
