@@ -6,17 +6,24 @@ const title = document.querySelector('#chatTitle');
 const meta = document.querySelector('#chatMeta');
 const avatar = document.querySelector('#avatar');
 
-// Supports common WhatsApp exports, including 12/24-hour time and optional seconds.
-const messageStart = /^(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}),?\s+(\d{1,2}:\d{2}(?::\d{2})?\s*(?:am|pm|AM|PM|a\.m\.|p\.m\.)?)\s+-\s+([^:]+):\s?(.*)$/;
+// Android: 17/02/2024, 5:40 pm - Name: Message
+// iPhone:  [09/12/2024, 21:22:57] Name: Message
+// Both forms occur in WhatsApp exports. Times may be 12- or 24-hour and may include seconds.
+const androidMessageStart = /^(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}),?\s+(\d{1,2}:\d{2}(?::\d{2})?\s*(?:am|pm|AM|PM|a\.m\.|p\.m\.)?)\s+-\s+([^:]+):\s?(.*)$/;
+const iphoneMessageStart = /^\[(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}),\s+(\d{1,2}:\d{2}(?::\d{2})?\s*(?:am|pm|AM|PM|a\.m\.|p\.m\.)?)\]\s+([^:]+):\s?(.*)$/;
+const timestampStart = /^(?:\[)?\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4},?/;
 
 function parseChat(text) {
   const messages = [];
   let current;
   text.replace(/^\uFEFF/, '').split(/\r?\n/).forEach(line => {
-    const match = line.match(messageStart);
+    const match = line.match(androidMessageStart) || line.match(iphoneMessageStart);
     if (match) {
       current = { date: match[1], time: match[2].replace(/\s+/g, ' '), sender: match[3].trim(), text: match[4] };
       messages.push(current);
+    } else if (timestampStart.test(line)) {
+      // Ignore WhatsApp's date-stamped system notices instead of appending them to a message.
+      current = null;
     } else if (current && line.trim()) {
       current.text += `\n${line}`;
     }
