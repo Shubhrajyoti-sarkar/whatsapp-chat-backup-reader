@@ -17,10 +17,10 @@
         <p class="intro">Turn an exported text chat into a calm, readable conversation.</p>
 
         <label class="file-drop" for="fileInput">
-          <input id="fileInput" type="file" accept=".txt,text/plain" />
+          <input id="fileInput" type="file" accept=".txt,.zip,text/plain,application/zip,application/x-zip-compressed" />
           <span class="upload-icon">↑</span>
           <strong>Choose a chat file</strong>
-          <small>Android or iPhone WhatsApp .txt export</small>
+          <small>Android or iPhone .txt / .zip export</small>
         </label>
 
         <div class="identity-control" id="identityControl" hidden>
@@ -50,11 +50,12 @@
         </div>
 
         <footer class="chat-footer">
-          <span>read-only archive</span>
+          <span>read-only archive · media stays local</span>
           <span>♡ made for remembering</span>
         </footer>
       </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
