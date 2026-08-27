@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark">✦</span> chat archive</div>
+        <h1>Your conversations,<br /><em>kept close.</em></h1>
+        <p class="intro">Turn an exported text chat into a calm, readable conversation.</p>
+
+        <label class="file-drop" for="fileInput">
+          <input id="fileInput" type="file" accept=".txt,text/plain" />
+          <span class="upload-icon">↑</span>
+          <strong>Choose a chat file</strong>
+          <small>WhatsApp .txt export</small>
+        </label>
+
+        <div class="identity-control" id="identityControl" hidden>
+          <label for="myName">Messages sent by</label>
+          <select id="myName"></select>
+          <small>Shown on the right</small>
+        </div>
+        <p class="privacy-note">Your file stays in your browser.</p>
+      </aside>
+
+      <section class="chat-panel">
+        <header class="chat-header">
+          <div class="avatar" id="avatar">✦</div>
+          <div>
+            <h2 id="chatTitle">A little archive</h2>
+            <p id="chatMeta">Load a chat export to begin</p>
+          </div>
+          <button id="themeButton" class="theme-button" type="button" aria-label="Toggle theme">☾</button>
+        </header>
+
+        <div id="chatArea" class="chat-area">
+          <div class="empty-state">
+            <div class="empty-orbit">✦</div>
+            <h3>Drop in a conversation</h3>
+            <p>Select a WhatsApp exported <code>.txt</code> file and it will appear here.</p>
+          </div>
+        </div>
+
+        <footer class="chat-footer">
+          <span>read-only archive</span>
+          <span>♡ made for remembering</span>
+        </footer>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

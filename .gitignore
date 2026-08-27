@@ -1,0 +1,6 @@
+# Local operating-system files
+.DS_Store
+Thumbs.db
+
+# Optional editor settings
+.vscode/
