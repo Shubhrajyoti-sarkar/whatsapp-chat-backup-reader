@@ -18,9 +18,9 @@ function parseChat(text) {
   const messages = [];
   let current;
   text.replace(/^\uFEFF/, '').split(/\r?\n/).forEach(line => {
-    // iPhone exports sometimes put an invisible direction mark before a timestamp.
-    // Remove it before matching so the new message is not treated as a continuation.
-    const parseLine = line.replace(/^[\u200e\u200f\u202a-\u202e]+/, '');
+    // iPhone exports sometimes insert invisible direction / zero-width markers
+    // around timestamps and attachment markers. Remove them before matching.
+    const parseLine = line.replace(/[\uFEFF\u200B-\u200F\u202A-\u202E\u2060]/g, '');
     const match = parseLine.match(androidMessageStart) || parseLine.match(iphoneMessageStart);
     if (match) {
       current = { date: match[1], time: match[2].replace(/\s+/g, ' '), sender: match[3].trim(), text: match[4] };
@@ -47,7 +47,7 @@ function normaliseFileName(name) {
 
 function attachmentFrom(text) {
   const cleanText = text.replace(/[\u200e\u200f\u202a-\u202e]/g, '');
-  const marker = cleanText.match(/<attached:\s*(.+?)>/i);
+  const marker = cleanText.match(/\\?<attached:\s*(.+?)>/i);
   const androidMarker = cleanText.match(/^(.+?)\s+\((?:file|image|video|audio|document) attached\)$/i);
   const name = marker?.[1] || androidMarker?.[1];
   return name ? { name: name.trim(), caption: cleanText.replace(marker?.[0] || androidMarker?.[0] || '', '').trim() } : null;
