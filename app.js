@@ -18,11 +18,14 @@ function parseChat(text) {
   const messages = [];
   let current;
   text.replace(/^\uFEFF/, '').split(/\r?\n/).forEach(line => {
-    const match = line.match(androidMessageStart) || line.match(iphoneMessageStart);
+    // iPhone exports sometimes put an invisible direction mark before a timestamp.
+    // Remove it before matching so the new message is not treated as a continuation.
+    const parseLine = line.replace(/^[\u200e\u200f\u202a-\u202e]+/, '');
+    const match = parseLine.match(androidMessageStart) || parseLine.match(iphoneMessageStart);
     if (match) {
       current = { date: match[1], time: match[2].replace(/\s+/g, ' '), sender: match[3].trim(), text: match[4] };
       messages.push(current);
-    } else if (timestampStart.test(line)) {
+    } else if (timestampStart.test(parseLine)) {
       // Ignore WhatsApp's date-stamped system notices instead of appending them to a message.
       current = null;
     } else if (current && line.trim()) {
